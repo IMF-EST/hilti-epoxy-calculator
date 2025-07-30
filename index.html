@@ -133,42 +133,43 @@
   </div>
 
   <script>
-    function calculateEpoxy() {
-      const diameter = parseFloat(document.getElementById('diameter').value);
-      const embedmentCm = parseFloat(document.getElementById('embedment').value);
-      const anchors = parseFloat(document.getElementById('anchors').value);
+  function calculateEpoxy() {
+    const diameter = parseFloat(document.getElementById('diameter').value);
+    const embedmentCm = parseFloat(document.getElementById('embedment').value);
+    const anchors = parseFloat(document.getElementById('anchors').value);
 
-      if (
-        isNaN(diameter) || diameter <= 0 ||
-        isNaN(embedmentCm) || embedmentCm <= 0 ||
-        isNaN(anchors) || anchors <= 0
-      ) {
-        document.getElementById('result').textContent = "Please enter valid positive numbers.";
-        return;
-      }
-
-      const embedment = embedmentCm * 10; // cm to mm
-      const holeDiameter = diameter + 4;
-      const rHole = holeDiameter / 2;
-      const rAnchor = diameter / 2;
-
-      const volumePerAnchor = Math.PI * (Math.pow(rHole, 2) - Math.pow(rAnchor, 2)) * embedment;
-      const totalVolume = volumePerAnchor * anchors;
-      const totalCm3 = totalVolume / 1000;
-
-      const usable330 = 330 * 0.98;
-      const usable500 = 500 * 0.98;
-
-      const cartridges330 = totalCm3 / usable330;
-      const cartridges500 = totalCm3 / usable500;
-
-      document.getElementById('result').innerHTML = `
-        <table>
-          <tr><th></th><th>330 ml</th><th>500 ml</th></tr>
-          <tr><td>Cartridges</td><td>${Math.ceil(cartridges330)}</td><td>${Math.ceil(cartridges500)}</td></tr>
-        </table>
-      `;
+    if (
+      isNaN(diameter) || diameter <= 0 ||
+      isNaN(embedmentCm) || embedmentCm <= 0 ||
+      isNaN(anchors) || anchors <= 0
+    ) {
+      document.getElementById('result').textContent = "Please enter valid positive numbers.";
+      return;
     }
+
+    const embedment = embedmentCm * 10; // cm to mm
+    const holeDiameter = diameter + 4;
+    const rHole = holeDiameter / 2;
+    const rAnchor = diameter / 2;
+
+    const volumePerAnchor = Math.PI * (Math.pow(rHole, 2) - Math.pow(rAnchor, 2)) * embedment;
+    const totalVolume = volumePerAnchor * anchors;
+    const totalCm3 = totalVolume / 1000;
+
+    const usable330 = 330 * 0.98;
+    const usable500 = 500 * 0.98;
+
+    const cartridges330 = totalCm3 / usable330;
+    const cartridges500 = totalCm3 / usable500;
+
+    document.getElementById('result').innerHTML = `
+      <table>
+        <tr><th></th><th>330 ml</th><th>500 ml</th></tr>
+        <tr><td>Cartridges</td><td>${cartridges330.toFixed(1)}</td><td>${cartridges500.toFixed(1)}</td></tr>
+      </table>
+    `;
+  }
   </script>
+
 </body>
 </html>
