@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hilti Epoxy Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .calculator {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 144px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #555;
+      text-align: left;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #bb2d3b;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #222;
+      font-weight: bold;
+    }
+
+    #disclaimer {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #999;
+    }
+
+    #disclaimer a {
+      color: #999;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <img src="logo.png" alt="Logo" class="logo">
+
+    <h2>Hilti Epoxy Calculator</h2>
+    
+    <label for="diameter">Anchor Diameter (mm):</label>
+    <input type="number" id="diameter" placeholder="e.g. 12">
+
+    <label for="embedment">Embedment Depth (cm):</label>
+    <input type="number" id="embedment" placeholder="e.g. 15">
+
+    <label for="anchors">Number of Anchors:</label>
+    <input type="number" id="anchors" placeholder="e.g. 20">
+
+    <label for="cartridge">Cartridge Size:</label>
+    <select id="cartridge">
+      <option value="300">300 cm³</option>
+      <option value="500">500 cm³</option>
+    </select>
+
+    <button onclick="calculateEpoxy()">Calculate</button>
+
+    <div id="result"></div>
+
+    <p id="disclaimer">
+      These calculations are based on 
+      <a href="https://www.hilti.com.jo/product/injectable-epoxy-mortar-hit-re-500-v4#Feature-and-application" target="_blank">
+        Hilti HIT-RE 500 V4 epoxy
+      </a>.
+    </p>
+  </div>
+
+  <script>
+    function calculateEpoxy() {
+      const diameter = parseFloat(document.getElementById('diameter').value);
+      const embedmentCm = parseFloat(document.getElementById('embedment').value);
+      const anchors = parseFloat(document.getElementById('anchors').value);
+      const cartridgeSize = parseFloat(document.getElementById('cartridge').value);
+      const usableRatio = 0.98; // 2% waste
+
+      if (
+        isNaN(diameter) || diameter <= 0 ||
+        isNaN(embedmentCm) || embedmentCm <= 0 ||
+        isNaN(anchors) || anchors <= 0
+      ) {
+        document.getElementById('result').textContent = "Please enter valid positive numbers.";
+        return;
+      }
+
+      const embedment = embedmentCm * 10; // convert to mm
+      const holeDiameter = diameter + 4;
+      const rHole = holeDiameter / 2;
+      const rAnchor = diameter / 2;
+
+      const volumePerAnchor = Math.PI * (Math.pow(rHole, 2) - Math.pow(rAnchor, 2)) * embedment; // mm³
+      const totalVolume = volumePerAnchor * anchors; // mm³
+
+      const totalVolumeCm3 = totalVolume / 1000; // convert to cm³
+      const usableVolumePerCartridge = cartridgeSize * usableRatio;
+
+      const cartridgesNeeded = totalVolumeCm3 / usableVolumePerCartridge;
+
+      document.getElementById('result').textContent =
+        `You need approximately ${cartridgesNeeded.toFixed(1)} cartridge(s) of epoxy.`;
+    }
+  </script>
+</body>
+</html>
