@@ -21,7 +21,7 @@
       border-radius: 15px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
       text-align: center;
     }
 
@@ -43,7 +43,7 @@
       text-align: left;
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 10px;
       font-size: 16px;
@@ -70,10 +70,27 @@
     }
 
     #result {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 18px;
       color: #222;
+    }
+
+    table {
+      margin: 15px auto;
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    th {
       font-weight: bold;
+      color: #444;
     }
 
     #disclaimer {
@@ -103,12 +120,6 @@
     <label for="anchors">Number of Anchors:</label>
     <input type="number" id="anchors" placeholder="e.g. 20">
 
-    <label for="cartridge">Cartridge Size:</label>
-    <select id="cartridge">
-      <option value="300">300 cm³</option>
-      <option value="500">500 cm³</option>
-    </select>
-
     <button onclick="calculateEpoxy()">Calculate</button>
 
     <div id="result"></div>
@@ -126,8 +137,6 @@
       const diameter = parseFloat(document.getElementById('diameter').value);
       const embedmentCm = parseFloat(document.getElementById('embedment').value);
       const anchors = parseFloat(document.getElementById('anchors').value);
-      const cartridgeSize = parseFloat(document.getElementById('cartridge').value);
-      const usableRatio = 0.98; // 2% waste
 
       if (
         isNaN(diameter) || diameter <= 0 ||
@@ -138,21 +147,27 @@
         return;
       }
 
-      const embedment = embedmentCm * 10; // convert to mm
+      const embedment = embedmentCm * 10; // cm to mm
       const holeDiameter = diameter + 4;
       const rHole = holeDiameter / 2;
       const rAnchor = diameter / 2;
 
-      const volumePerAnchor = Math.PI * (Math.pow(rHole, 2) - Math.pow(rAnchor, 2)) * embedment; // mm³
-      const totalVolume = volumePerAnchor * anchors; // mm³
+      const volumePerAnchor = Math.PI * (Math.pow(rHole, 2) - Math.pow(rAnchor, 2)) * embedment;
+      const totalVolume = volumePerAnchor * anchors;
+      const totalCm3 = totalVolume / 1000;
 
-      const totalVolumeCm3 = totalVolume / 1000; // convert to cm³
-      const usableVolumePerCartridge = cartridgeSize * usableRatio;
+      const usable330 = 330 * 0.98;
+      const usable500 = 500 * 0.98;
 
-      const cartridgesNeeded = totalVolumeCm3 / usableVolumePerCartridge;
+      const cartridges330 = totalCm3 / usable330;
+      const cartridges500 = totalCm3 / usable500;
 
-      document.getElementById('result').textContent =
-        `You need approximately ${cartridgesNeeded.toFixed(1)} cartridge(s).`;
+      document.getElementById('result').innerHTML = `
+        <table>
+          <tr><th></th><th>330 ml</th><th>500 ml</th></tr>
+          <tr><td>Cartridges</td><td>${Math.ceil(cartridges330)}</td><td>${Math.ceil(cartridges500)}</td></tr>
+        </table>
+      `;
     }
   </script>
 </body>
